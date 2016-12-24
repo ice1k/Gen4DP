@@ -1,0 +1,7 @@
+## configuration ##
+
+.idea/
+
+## compile output ##
+
+bin/
