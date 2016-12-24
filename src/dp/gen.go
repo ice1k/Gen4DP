@@ -13,13 +13,10 @@ const (
 func Clean(str string) string {
 	return strings.Replace(
 		strings.Replace(
-			str,
-			" ",
-			"",
-			-1),
-		"\t",
-		"",
-		1)
+			strings.Replace(
+				str, "\n", "", -1),
+			" ", "", -1),
+		"\t", "", 1)
 }
 
 func GetCondition(str string) string {
@@ -61,3 +58,5 @@ func GetExpression(str string) string {
 	}
 	return str
 }
+
+
