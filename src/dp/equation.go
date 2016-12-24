@@ -23,7 +23,7 @@ type equation struct {
 
 type branch struct {
 	conditions string
-	content    equation
+	expression string
 }
 
 func NewState(source string) *state {
@@ -33,8 +33,8 @@ func NewState(source string) *state {
 	} else {
 		branches := make([]branch, len(split) - 1)
 		for index, i := range split[2:] {
-			strings.Trim(i, "\n\t ")
-			branches[index].conditions = GetCondition(i)
+			branches[index].conditions = GetCondition(Clean(i))
+			branches[index].expression = GetExpression(Clean(i))
 		}
 	}
 	return nil

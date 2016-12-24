@@ -6,6 +6,7 @@ import (
 )
 
 func ParseTest() {
-	var str = "dickdickdick(2333)"
+	var str = dp.Clean("a[i, j] = a[i - 1, j - 1] + 1 ( 2333 )")
 	fmt.Println(dp.GetCondition(str))
+	fmt.Println(dp.GetExpression(str))
 }

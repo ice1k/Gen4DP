@@ -1,11 +1,28 @@
 package dp
 
+import (
+	"strings"
+)
+
+const (
+	NOT_FOUND       rune = 0
+	FOUND_ENDING    rune = 1
+	FOUND_BEGINNING rune = 2
+)
+
+func Clean(str string) string {
+	return strings.Replace(
+		strings.Replace(
+			str,
+			" ",
+			"",
+			-1),
+		"\t",
+		"",
+		1)
+}
+
 func GetCondition(str string) string {
-	const (
-		NOT_FOUND       rune = 0
-		FOUND_ENDING    rune = 1
-		FOUND_BEGINNING rune = 2
-	)
 	var quoteState = NOT_FOUND
 	var endingIndex = -1
 	var beginningIndex = -1
@@ -14,13 +31,13 @@ func GetCondition(str string) string {
 		case NOT_FOUND:
 			if str[i] == ')' {
 				quoteState = FOUND_ENDING
-				endingIndex = i - 1
+				endingIndex = i
 			}
 			break
 		case FOUND_ENDING:
 			if str[i] == '(' {
 				quoteState = FOUND_BEGINNING
-				beginningIndex = i
+				beginningIndex = i + 1
 				if endingIndex != -1 {
 					return str[beginningIndex:endingIndex]
 				} else {
@@ -37,5 +54,10 @@ func GetCondition(str string) string {
 }
 
 func GetExpression(str string) string {
-	return "" // TODO
+	for i := 0; i < len(str); i++ {
+		if str[i] == '(' || str[i] == ')' {
+			return str[:i]
+		}
+	}
+	return str
 }
