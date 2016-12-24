@@ -1,15 +1,43 @@
-package equation
+package dp
+
+import (
+	"strings"
+)
 
 type state struct {
 	/// dimension of the dp equ
 	dimension rune
 	/// this is a little bit difficult to explain
 	/// document will be available soon
-	relations  rune
+	selfRelations     rune
+	externalRelations rune
 }
 
 type stateEquation struct {
-	stt state
+	stt      state
+	branches []branch
+}
+
+type equation struct {
+}
+
+type branch struct {
+	conditions string
+	content    equation
+}
+
+func NewState(source string) *state {
+	split := strings.Split(source, "=")
+	if len(split) < 2 {
+		return nil
+	} else {
+		branches := make([]branch, len(split) - 1)
+		for index, i := range split[2:] {
+			strings.Trim(i, "\n\t ")
+			branches[index].conditions = GetCondition(i)
+		}
+	}
+	return nil
 }
 
 //const (
