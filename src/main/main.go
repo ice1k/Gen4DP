@@ -1,9 +1,10 @@
 package main
 
 import (
-	"test"
+	"../test"
 )
 
 func main() {
-	dp.ParseTest()
+	//dp_test.ParseTest()
+	dp_test.ParseTest2()
 }

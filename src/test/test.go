@@ -1,18 +1,33 @@
-package dp
+package dp_test
 
 import (
+	"../dp/core"
 	"fmt"
-	"dp"
 )
 
 func ParseTest() {
-	var str = dp.Clean("a[i, j] = a[i - 1, j - 1] + 1 ( 2333 )")
-	fmt.Println(dp.GetCondition(str))
-	fmt.Println(dp.GetExpression(str))
 	var equ = `
-dp[i] = dp[i - 1] + dp[i - 2] (i >= 2)
-	= 1 (i == 1 || i == 2)
-	= 0 (else)`
-	state := dp.NewState(equ)
-	fmt.Println(state)
+dp[i] -> dp[i - 1] + dp[i - 2] (i >= 2)
+      -> 1 (i == 1 or i == 2)
+      -> 0 (else)`
+	equation := dp.Parse(equ)
+	fmt.Println("Name:", equation.State.Name)
+	fmt.Println("Dims:", len(equation.State.DimExpr))
+	for i := 0; i < len(equation.Branches); i++ {
+		fmt.Print("In branch ", i, ":\n\texpression:\n\t\t", equation.Branches[i].Expression)
+		fmt.Print("\n\tcondition:\n\t\t", equation.Branches[i].Conditions)
+		fmt.Println()
+	}
+	fmt.Printf("max len = %d\n", equation.Detail.MaxLen)
+	style := dp.NewCodeStyle()
+	fmt.Println(equation.GenerateClang(*style))
+}
+
+func ParseTest2() {
+	var equ = `
+dp[i] -> dp[i - 1] + dp[i - 2] + dp[i - 3](i >= 2)
+      -> 2 (i == 2 or i == 3)
+      -> 1 (i == 1)
+      -> 0 (else)`
+	fmt.Println(dp.Parse(equ).GenerateClang(*dp.NewCodeStyle()))
 }
