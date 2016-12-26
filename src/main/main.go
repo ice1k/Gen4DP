@@ -5,6 +5,6 @@ import (
 )
 
 func main() {
-	//dp_test.ParseTest()
-	dp_test.ParseTest2()
+	dp_test.ParseTest()
+	// dp_test.ParseTest2()
 }
