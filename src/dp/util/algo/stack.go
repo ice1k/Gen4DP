@@ -28,7 +28,7 @@ func (s *stack) Push(element int) {
 }
 
 func (s *stack) IsEmpty() bool {
-	return s.index >= 1
+	return s.index <= 0
 }
 
 func (s *stack) Pop() int {
