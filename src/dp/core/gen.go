@@ -1,7 +1,7 @@
 package dp
 
 import (
-	"../util/sb"
+	"dp/util/sb"
 	"fmt"
 	"strings"
 )
@@ -11,12 +11,11 @@ func loopWith(looper string, len string, style codeStyle) string {
 	if style.UseArrayFromOne {
 		begin++
 	}
-	return fmt.Sprintf("for (%s=%d; %s<%s+%d; ++%s) {",
+	return fmt.Sprintf("for (%s=%d; %s<=%s; ++%s) {",
 		looper,
 		begin,
 		looper,
 		len,
-		begin,
 		looper)
 }
 
@@ -45,7 +44,7 @@ func (info *dyProInfo) GenerateClang(style codeStyle) string {
 	dyPro = func(idx int) {
 		if idx >= len(info.State.DimExpr) {
 			for index, i := range info.Branches {
-				if index >= 1 && index <= len(info.Branches) - 2 {
+				if index >= 1 && index <= len(info.Branches)-2 {
 					ret.AppendLineIndent("else if (" + i.Conditions + ") {")
 				} else if index == 0 {
 					ret.AppendLineIndent("if (" + i.Conditions + ") {")

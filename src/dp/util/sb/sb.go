@@ -1,8 +1,8 @@
 package sb
 
 import (
-	"strings"
 	"fmt"
+	"strings"
 )
 
 const maxLength = 150

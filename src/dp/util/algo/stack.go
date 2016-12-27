@@ -34,5 +34,5 @@ func (s *stack) Pop() int {
 }
 
 func (s *stack) Front() int {
-	return s.data[s.index - 1]
+	return s.data[s.index-1]
 }

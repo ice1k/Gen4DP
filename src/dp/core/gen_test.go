@@ -1,16 +1,16 @@
-package dp_test
+package dp
 
 import (
-	"../dp/core"
 	"fmt"
+	"testing"
 )
 
-func ParseTest() {
+func TestParse(t *testing.T) {
 	var equ = `
 dp[i] -> dp[i - 1] + dp[i - 2] (i >= 2)
       -> 1 (i == 1 or i == 2)
       -> 0 (else)`
-	equation := dp.Parse(equ)
+	equation := Parse(equ)
 	fmt.Println("Name:", equation.State.Name)
 	fmt.Println("Dims:", len(equation.State.DimExpr))
 	for i := 0; i < len(equation.Branches); i++ {
@@ -19,15 +19,15 @@ dp[i] -> dp[i - 1] + dp[i - 2] (i >= 2)
 		fmt.Println()
 	}
 	fmt.Printf("max len = %d\n", equation.Detail.MaxLen)
-	style := dp.NewCodeStyle()
+	style := NewCodeStyle()
 	fmt.Println(equation.GenerateClang(*style))
 }
 
-func ParseTest2() {
+func TestParse2(t *testing.T) {
 	var equ = `
 dp[i] -> dp[i - 1] + dp[i - 2] + dp[i - 3](i >= 2)
       -> 2 (i == 2 or i == 3)
       -> 1 (i == 1)
       -> 0 (else)`
-	fmt.Println(dp.Parse(equ).GenerateClang(*dp.NewCodeStyle()))
+	fmt.Println(Parse(equ).GenerateClang(*NewCodeStyle()))
 }

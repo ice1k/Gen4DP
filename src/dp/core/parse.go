@@ -1,10 +1,10 @@
 package dp
 
 import (
-	"strings"
-	"../err"
-	"fmt"
+	"dp/err"
 	"dp/util/algo"
+	"fmt"
+	"strings"
 )
 
 const (
@@ -21,7 +21,7 @@ const (
 	QUOTE_MIDDLE_LEFT  = '['
 	QUOTE_MIDDLE_RIGHT = ']'
 	QUOTE_LARGE_LEFT   = '{'
-	QUOTE_LARGE_RIGTH  = '}'
+	QUOTE_LARGE_RIGHT  = '}'
 	QUOTE_SHARP_LEFT   = '<'
 	QUOTE_SHARP_RIGTH  = '>'
 )
@@ -63,7 +63,7 @@ func checkQuote(str string) {
 		case QUOTE_SHARP_LEFT:
 			stack.Push(QUOTE_SHARP)
 			break
-		case QUOTE_LARGE_RIGTH:
+		case QUOTE_LARGE_RIGHT:
 			//
 		}
 	}
@@ -122,7 +122,7 @@ func newState(str string) *state {
 	if sep == -1 {
 		err.Raise("main expression error")
 	}
-	ret.DimExpr = strings.Split(str[sep + 1:len(str) - 1], DIMENSION_SEP)
+	ret.DimExpr = strings.Split(str[sep+1:len(str)-1], DIMENSION_SEP)
 	ret.Name = str[:sep]
 	return ret
 }
@@ -141,7 +141,7 @@ func newStateEquation(source string) *dyProInfo {
 	if len(split) < 2 {
 		err.Raise("require branches!")
 	} else {
-		branches := make([]branch, len(split) - 1)
+		branches := make([]branch, len(split)-1)
 		for index, i := range split[1:] {
 			branches[index] = *newBranch(i)
 		}

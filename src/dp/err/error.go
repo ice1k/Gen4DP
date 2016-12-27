@@ -1,8 +1,8 @@
 package err
 
 import (
-	"fmt"
 	"container/list"
+	"fmt"
 	"strings"
 )
 
