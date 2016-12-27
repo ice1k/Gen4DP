@@ -4,6 +4,7 @@ import (
 	"dp/util/sb"
 	"fmt"
 	"strings"
+	"dp/err"
 )
 
 func loopWith(looper string, len string, style codeStyle) string {
@@ -21,6 +22,9 @@ func loopWith(looper string, len string, style codeStyle) string {
 
 /// core code generation function
 func (info *dyProInfo) GenerateClang(style codeStyle) string {
+	if err.HasGotError() {
+		return "unable to generate code."
+	}
 	ret := sb.NewStringBuffer()
 	ret.AppendLine(
 		"#include <iostream>\n" +
@@ -62,7 +66,7 @@ func (info *dyProInfo) GenerateClang(style codeStyle) string {
 		}
 	}
 	dyPro(0)
-	ret.AppendFormat("cout<<%s[%s-1]<<endl;\n", info.State.Name, "n")
+	ret.AppendFormat("cout<<%s[%s]<<endl;\n", info.State.Name, "n")
 	// add codes in main func
 	ret.AppendLine("return 0;")
 	ret.AppendLineClose("}")

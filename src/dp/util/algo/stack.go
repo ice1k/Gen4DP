@@ -15,11 +15,16 @@ func NewStack(maxLen int) *stack {
 	return ret
 }
 
-func (s *stack) Push(element ...int) {
+func (s *stack) Insert(element ...int) {
 	for i := 0; i < len(element); i++ {
 		s.data[s.index] = element[i]
 		s.index++
 	}
+}
+
+func (s *stack) Push(element int) {
+	s.data[s.index] = element
+	s.index++
 }
 
 func (s *stack) IsEmpty() bool {
@@ -27,12 +32,16 @@ func (s *stack) IsEmpty() bool {
 }
 
 func (s *stack) Pop() int {
-	if s.IsEmpty() {
+	if !s.IsEmpty() {
 		s.index--
 	}
 	return s.data[s.index]
 }
 
 func (s *stack) Front() int {
-	return s.data[s.index-1]
+	return s.data[s.index - 1]
+}
+
+func (s *stack) Size() int {
+	return s.index
 }
