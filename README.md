@@ -2,13 +2,15 @@
 
 This is a simple program which generates C++ dynamic programming code from given state-translation equation.
 
+Unit tests are included.
+
 ## Example
 
 for the input:
 
 ```c
-dp[i] -> dp[i - 1] + dp[i - 2] (i >= 2)
-      -> 1 (i == 1 or i == 2)
+dp[full] -> dp[full - 1] + dp[full - 2] (full >= 2)
+      -> 1 (full == 1 or full == 2)
       -> 0 (else)
 ```
 
@@ -23,17 +25,17 @@ using namespace std;
 number dp[SIZE];
 
 int main(const int argc, const char *argv[]) {
-	int i, n;
+	int index, n;
 	cin>>n;
-	for (i=0; i<n+0; ++i) {
-		if (i>=2) {
-			dp[i] = dp[i-1]+dp[i-2];
+	for (index=0; index<n+0; ++index) {
+		if (index>=2) {
+			dp[index] = dp[index-1]+dp[index-2];
 		}
-		else if (i==1||i==2) {
-			dp[i] = 1;
+		else if (index==1||index==2) {
+			dp[index] = 1;
 		}
 		else {
-			dp[i] = 0;
+			dp[index] = 0;
 		}
 	}
 	cout<<dp[n-1]<<endl;
@@ -41,4 +43,4 @@ int main(const int argc, const char *argv[]) {
 }
 ```
 
-Error handling and multi-code style support is still working in progress.
+Error handling and multi code style support is still working in progress.

@@ -22,6 +22,7 @@ func NewStringBuffer() *stringBuffer {
 	return ret
 }
 
+/// append a string to the tail of this buffer
 func (sb *stringBuffer) Append(str string) *stringBuffer {
 	sb.data[sb.index] = strings.Repeat("\t", sb.indent) + str
 	sb.index++
@@ -59,6 +60,11 @@ func (sb *stringBuffer) slice() *stringBuffer {
 	sb.data[0] = sb.ToString()
 	sb.index = 1
 	return sb
+}
+
+/// append a line as comment.
+func (sb *stringBuffer) AppendComment(str string) *stringBuffer {
+	return sb.AppendLine("/// " + str)
 }
 
 func (sb *stringBuffer) ToString() string {

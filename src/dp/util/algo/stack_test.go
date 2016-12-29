@@ -7,7 +7,7 @@ import (
 func TestNewStack(t *testing.T) {
 	a := NewStack(100)
 	a.Insert(1, 2, 3, 4, 5)
-	if a.Front() != 5 {
+	if a.Top() != 5 {
 		t.FailNow()
 	}
 	if a.Pop() != 5 {

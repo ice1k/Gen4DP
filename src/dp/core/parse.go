@@ -2,7 +2,6 @@ package dp
 
 import (
 	"dp/err"
-	"dp/util/algo"
 	"fmt"
 	"strings"
 )
@@ -14,23 +13,8 @@ const (
 )
 
 const (
-	BRANCH_TOKEN       = "->"
-	DIMENSION_SEP      = ","
-	BRACE_SMALL_RIGHT  = ')'
-	BRACE_SMALL_LEFT   = '('
-	BRACE_MIDDLE_LEFT  = '['
-	BRACE_MIDDLE_RIGHT = ']'
-	BRACE_LARGE_LEFT   = '{'
-	BRACE_LARGE_RIGHT  = '}'
-	BRACE_SHARP_LEFT   = '<'
-	BRACE_SHARP_RIGTH  = '>'
-)
-
-const (
-	BRACE_SMALL  = 0x00
-	BRACE_MIDDLE = 0x01
-	BRACE_LARGE  = 0x02
-	BRACE_SHARP  = 0x03
+	BRANCH_TOKEN  = "->"
+	DIMENSION_SEP = ","
 )
 
 /// clean the expression
@@ -45,51 +29,6 @@ func Clean(str string) string {
 				"\n", "", -1),
 			" ", "", -1),
 		"\t", "", 1)
-}
-
-func checkBrace(str string) {
-	stack := algo.NewStack(1000)
-	for i := 0; i < len(str); i++ {
-		switch str[i] {
-		case BRACE_LARGE_LEFT:
-			stack.Push(BRACE_LARGE)
-			break
-		case BRACE_MIDDLE_LEFT:
-			stack.Push(BRACE_MIDDLE)
-			break
-		case BRACE_SMALL_LEFT:
-			stack.Push(BRACE_SMALL)
-			break
-		case BRACE_SHARP_LEFT:
-			stack.Push(BRACE_SHARP)
-			break
-		case BRACE_LARGE_RIGHT:
-			if stack.IsEmpty() || stack.Pop() != BRACE_LARGE {
-				err.Raise("brace {} doesn't matches!")
-			}
-			return
-		case BRACE_MIDDLE_RIGHT:
-			if stack.IsEmpty() || stack.Pop() != BRACE_MIDDLE {
-				fmt.Println(stack.Size())
-				fmt.Println(stack.Front() == BRACE_MIDDLE)
-				err.Raise("brace [] doesn't matches!")
-			}
-			return
-		case BRACE_SMALL_RIGHT:
-			if stack.IsEmpty() || stack.Pop() != BRACE_SMALL {
-				err.Raise("brace () doesn't matches!")
-			}
-			return
-		case BRACE_SHARP_RIGTH:
-			if stack.IsEmpty() || stack.Pop() != BRACE_SHARP {
-				err.Raise("brace <> doesn't matches!")
-			}
-			return
-		}
-	}
-	if !stack.IsEmpty() {
-		err.Raise("brace doesn' matches!")
-	}
 }
 
 func newCondition(str string) string {
@@ -111,17 +50,16 @@ func newCondition(str string) string {
 				if endingIndex != -1 {
 					return str[beginningIndex:endingIndex]
 				} else {
-					err.Raise("ending BRACE not found")
+					err.Raise("Ending BRACE not found")
 					return "else"
 				}
 			}
 			break
 		case FOUND_BEGINNING:
-			err.Raise("program has been mysteriously exited")
+			err.Raise("Program has been mysteriously exited")
 			return "else"
 		}
 	}
-	err.Raise("require condition!")
 	return "else"
 }
 
@@ -145,29 +83,34 @@ func newState(str string) *state {
 	ret := new(state)
 	sep := strings.Index(str, string(BRACE_MIDDLE_LEFT))
 	if sep == -1 {
-		err.Raise("main expression error")
+		err.Raise("Main expression error")
 	}
-	ret.DimExpr = strings.Split(str[sep + 1:len(str) - 1], DIMENSION_SEP)
+	ret.NameExpr = str
 	ret.Name = str[:sep]
+	ret.DimExpr = strings.Split(str[sep+1:len(str)-1], DIMENSION_SEP)
+	ret.RelationExpr = make([]string, 0) /// TODO
 	return ret
 }
 
 func Parse(source string) *dyProInfo {
 	checkBrace(source)
-	ret := newStateEquation(Clean(source))
-	fmt.Errorf(err.GetMessages())
+	ret := newStateEquation(source)
+	checkSymbol(ret)
+	checkDimension(ret)
+	fmt.Errorf(err.GetErrors())
 	return ret
 }
 
-func newStateEquation(source string) *dyProInfo {
+func newStateEquation(code string) *dyProInfo {
+	source := Clean(code)
 	ret := new(dyProInfo)
 	ret.Type = "int"
-	ret.Detail = *NewImplDetail(10001)
+	ret.Detail = *NewImplDetail(101)
 	split := strings.Split(source, BRANCH_TOKEN)
 	if len(split) < 2 {
-		err.Raise("require branches!")
+		err.Raise("Require branches!")
 	} else {
-		branches := make([]branch, len(split) - 1)
+		branches := make([]branch, len(split)-1)
 		for index, i := range split[1:] {
 			branches[index] = *newBranch(i)
 		}

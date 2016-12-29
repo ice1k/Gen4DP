@@ -1,15 +1,17 @@
 package dp
 
+/// example: dp[i, j] -> dp[i - 1, j - 1] + 1 (else)
 type state struct {
-	Name    string
-	DimExpr []string /// Dimension of the dp equ
-	//SelfRelationExpr     []string
-	//ExternalRelationExpr []string
+	Name         string /// like: dp
+	NameExpr     string /// like: dp[i, j]
+	RelationExpr []string
+	DimExpr      []string /// Dimension of the dp equ
 }
 
 type dyProInfo struct {
-	State    state
+	Source   string
 	Type     string
+	State    state
 	Branches []branch
 	Detail   implDetail
 }

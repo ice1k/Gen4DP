@@ -38,10 +38,14 @@ func (s *stack) Pop() int {
 	return s.data[s.index]
 }
 
-func (s *stack) Front() int {
-	return s.data[s.index - 1]
+func (s *stack) Top() int {
+	return s.data[s.index-1]
 }
 
 func (s *stack) Size() int {
 	return s.index
+}
+
+func (s *stack) Clear() {
+	s.index = 0
 }
