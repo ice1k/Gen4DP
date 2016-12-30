@@ -16,6 +16,7 @@ gofmt -w src
 cd src
 
 go build -o Gen4DP.exe
+move Gen4DP.exe ../
 
 cd ..
 

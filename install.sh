@@ -14,6 +14,7 @@ gofmt -w src
 cd src
 
 go install -o Gen4DP
+mv Gen4DP ../
 
 cd ..
 
