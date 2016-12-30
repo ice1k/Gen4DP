@@ -237,6 +237,15 @@ func runSymbolCheck(name string) bool {
 	return true
 }
 
+func isPreservedWord(str string) bool {
+	for _, i := range getPreservedWords() {
+		if i == str {
+			return true
+		}
+	}
+	return false
+}
+
 func runExprDimCheck(expr string, dim int) bool {
 	inBrace := false
 	lastBraceIndex := -1
@@ -262,6 +271,10 @@ func runExprDimCheck(expr string, dim int) bool {
 
 func checkSymbol(info *dyProInfo) {
 	for _, i := range info.State.DimExpr {
+		if isPreservedWord(i) {
+			err.RaiseFormat("C++ preserved word: %s.", i)
+			continue
+		}
 		if !runSymbolCheck(i) {
 			err.RaiseFormat("Invalid name in expression: %s.", i)
 		}
@@ -270,6 +283,11 @@ func checkSymbol(info *dyProInfo) {
 
 func checkDimension(info *dyProInfo) {
 	for i := 0; i < len(info.State.DimExpr); i++ {
+		if isPreservedWord(info.State.DimExpr[i]) {
+			err.RaiseFormat("C++ preserved word: %s.",
+				info.State.DimExpr[i])
+			continue
+		}
 		for j := i + 1; j < len(info.State.DimExpr); j++ {
 			if info.State.DimExpr[i] == info.State.DimExpr[j] {
 				err.RaiseFormat("Dimension index name redefined: %s.",
