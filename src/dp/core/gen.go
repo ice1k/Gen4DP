@@ -80,10 +80,10 @@ func (info *dyProInfo) GenerateClang(style codeStyle) string {
 			for index, i := range info.Branches {
 				if index >= 1 && index <= len(info.Branches)-2 {
 					ret.AppendLineIndent(
-						"else if (" + i.Conditions + ") {")
+						"else if (" + i.Condition + ") {")
 				} else if index == 0 {
 					ret.AppendLineIndent(
-						"if (" + i.Conditions + ") {")
+						"if (" + i.Condition + ") {")
 				} else {
 					ret.AppendLineIndent("else {")
 				}

@@ -21,8 +21,9 @@ type implDetail struct {
 }
 
 type branch struct {
-	Conditions string
+	Condition  string
 	Expression string
+	IsDefault  bool
 }
 
 func NewImplDetail(maxLen int) *implDetail {

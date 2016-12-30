@@ -23,6 +23,7 @@ func TestCheckCondition(t *testing.T) {
 func TestCheckName(t *testing.T) {
 	code := "dp[233i - 1] -> dp[boyi - 1] (else)"
 	res := Parse(code)
+	Parse("int[i] -> int[i-1] (else)")
 	fmt.Println(err.GetErrors())
 	fmt.Println(res.GenerateClang(*NewCodeStyle()))
 }

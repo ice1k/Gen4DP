@@ -270,15 +270,19 @@ func runExprDimCheck(expr string, dim int) bool {
 }
 
 func checkSymbol(info *dyProInfo) {
-	for _, i := range info.State.DimExpr {
+	chk := func(i string) {
 		if isPreservedWord(i) {
 			err.RaiseFormat("C++ preserved word: %s.", i)
-			continue
+			return
 		}
 		if !runSymbolCheck(i) {
 			err.RaiseFormat("Invalid name in expression: %s.", i)
 		}
 	}
+	for _, i := range info.State.DimExpr {
+		chk(i)
+	}
+	chk(info.State.Name)
 }
 
 func checkDimension(info *dyProInfo) {

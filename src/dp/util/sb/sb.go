@@ -70,3 +70,8 @@ func (sb *stringBuffer) AppendComment(str string) *stringBuffer {
 func (sb *stringBuffer) ToString() string {
 	return strings.Join(sb.data, "")
 }
+
+/// clear elements.
+func (sb *stringBuffer) Clear() {
+	sb.indent = 0
+}

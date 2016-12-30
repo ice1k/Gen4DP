@@ -17,6 +17,8 @@ const (
 	DIMENSION_SEP = ","
 )
 
+const CONDITION_ELSE = "else"
+
 /// clean the expression
 func Clean(str string) string {
 	return strings.Replace(
@@ -51,16 +53,16 @@ func newCondition(str string) string {
 					return str[beginningIndex:endingIndex]
 				} else {
 					err.Raise("Ending BRACE not found")
-					return "else"
+					return CONDITION_ELSE
 				}
 			}
 			break
 		case FOUND_BEGINNING:
 			err.Raise("Program has been mysteriously exited")
-			return "else"
+			return CONDITION_ELSE
 		}
 	}
-	return "else"
+	return CONDITION_ELSE
 }
 
 func newExpression(str string) string {
@@ -74,8 +76,9 @@ func newExpression(str string) string {
 
 func newBranch(code string) *branch {
 	ret := new(branch)
-	ret.Conditions = newCondition(code)
+	ret.Condition = newCondition(code)
 	ret.Expression = newExpression(code)
+	ret.IsDefault = ret.Condition == CONDITION_ELSE
 	return ret
 }
 
@@ -87,11 +90,12 @@ func newState(str string) *state {
 	}
 	ret.NameExpr = str
 	ret.Name = str[:sep]
-	ret.DimExpr = strings.Split(str[sep+1:len(str)-1], DIMENSION_SEP)
+	ret.DimExpr = strings.Split(str[sep + 1:len(str) - 1], DIMENSION_SEP)
 	ret.RelationExpr = make([]string, 0) /// TODO
 	return ret
 }
 
+/// parse the given source code
 func Parse(source string) *dyProInfo {
 	checkBrace(source)
 	ret := newStateEquation(source)
@@ -110,7 +114,7 @@ func newStateEquation(code string) *dyProInfo {
 	if len(split) < 2 {
 		err.Raise("Require branches!")
 	} else {
-		branches := make([]branch, len(split)-1)
+		branches := make([]branch, len(split) - 1)
 		for index, i := range split[1:] {
 			branches[index] = *newBranch(i)
 		}

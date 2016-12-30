@@ -15,7 +15,7 @@ dp[i, j, k] -> dp[i - 1] + dp[i - 2] (i >= 2)
 	fmt.Println("Dims:", len(equation.State.DimExpr))
 	for i := 0; i < len(equation.Branches); i++ {
 		fmt.Print("In branch ", i, ":\n\texpression:\n\t\t", equation.Branches[i].Expression)
-		fmt.Print("\n\tcondition:\n\t\t", equation.Branches[i].Conditions)
+		fmt.Print("\n\tcondition:\n\t\t", equation.Branches[i].Condition)
 		fmt.Println()
 	}
 	fmt.Printf("max len = %d\n", equation.Detail.MaxLen)
