@@ -5,3 +5,6 @@
 ## compile output ##
 
 bin/
+*.exe
+*.obj
+*.o
