@@ -1,5 +1,7 @@
 @echo off
 
+echo compiling...
+
 setlocal
 
 if exist install.bat goto ok
@@ -11,11 +13,12 @@ goto end
 set OLDGOPATH=%GOPATH%
 set GOPATH=%~dp0
 
-gofmt -w src
+gofmt -w ./
 
 cd src
 
 go build -o Gen4DP.exe
+move Gen4DP.exe ../
 
 cd ..
 

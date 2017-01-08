@@ -1,4 +1,4 @@
-package dp
+package core
 
 type codeStyle struct {
 	UseDefine       bool
@@ -9,7 +9,7 @@ type codeStyle struct {
 func NewCodeStyle() *codeStyle {
 	ret := new(codeStyle)
 	ret.UseArrayFromOne = false
-	ret.UseDefine = true
+	ret.UseDefine = false
 	ret.UsePrefixInc = true
 	return ret
 }

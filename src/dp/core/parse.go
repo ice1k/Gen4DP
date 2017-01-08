@@ -1,8 +1,8 @@
-package dp
+package core
 
 import (
-	"dp/err"
-	"dp/util/algo"
+	"dp/msg"
+	"dp/util"
 	"fmt"
 	"strings"
 )
@@ -14,24 +14,11 @@ const (
 )
 
 const (
-	BRANCH_TOKEN       = "->"
-	DIMENSION_SEP      = ","
-	BRACE_SMALL_RIGHT  = ')'
-	BRACE_SMALL_LEFT   = '('
-	BRACE_MIDDLE_LEFT  = '['
-	BRACE_MIDDLE_RIGHT = ']'
-	BRACE_LARGE_LEFT   = '{'
-	BRACE_LARGE_RIGHT  = '}'
-	BRACE_SHARP_LEFT   = '<'
-	BRACE_SHARP_RIGTH  = '>'
+	BRANCH_TOKEN  = "->"
+	DIMENSION_SEP = ","
 )
 
-const (
-	BRACE_SMALL  = 0x00
-	BRACE_MIDDLE = 0x01
-	BRACE_LARGE  = 0x02
-	BRACE_SHARP  = 0x03
-)
+const CONDITION_ELSE = "else"
 
 /// clean the expression
 func Clean(str string) string {
@@ -47,51 +34,6 @@ func Clean(str string) string {
 		"\t", "", 1)
 }
 
-func checkBrace(str string) {
-	stack := algo.NewStack(1000)
-	for i := 0; i < len(str); i++ {
-		switch str[i] {
-		case BRACE_LARGE_LEFT:
-			stack.Push(BRACE_LARGE)
-			break
-		case BRACE_MIDDLE_LEFT:
-			stack.Push(BRACE_MIDDLE)
-			break
-		case BRACE_SMALL_LEFT:
-			stack.Push(BRACE_SMALL)
-			break
-		case BRACE_SHARP_LEFT:
-			stack.Push(BRACE_SHARP)
-			break
-		case BRACE_LARGE_RIGHT:
-			if stack.IsEmpty() || stack.Pop() != BRACE_LARGE {
-				err.Raise("brace {} doesn't matches!")
-			}
-			return
-		case BRACE_MIDDLE_RIGHT:
-			if stack.IsEmpty() || stack.Pop() != BRACE_MIDDLE {
-				fmt.Println(stack.Size())
-				fmt.Println(stack.Front() == BRACE_MIDDLE)
-				err.Raise("brace [] doesn't matches!")
-			}
-			return
-		case BRACE_SMALL_RIGHT:
-			if stack.IsEmpty() || stack.Pop() != BRACE_SMALL {
-				err.Raise("brace () doesn't matches!")
-			}
-			return
-		case BRACE_SHARP_RIGTH:
-			if stack.IsEmpty() || stack.Pop() != BRACE_SHARP {
-				err.Raise("brace <> doesn't matches!")
-			}
-			return
-		}
-	}
-	if !stack.IsEmpty() {
-		err.Raise("brace doesn' matches!")
-	}
-}
-
 func newCondition(str string) string {
 	var BRACEState = NOT_FOUND
 	var endingIndex = -1
@@ -99,35 +41,35 @@ func newCondition(str string) string {
 	for i := len(str) - 1; i >= 0; i-- {
 		switch BRACEState {
 		case NOT_FOUND:
-			if str[i] == BRACE_SMALL_RIGHT {
+			if str[i] == util.BRACE_SMALL_RIGHT {
 				BRACEState = FOUND_ENDING
 				endingIndex = i
 			}
 			break
 		case FOUND_ENDING:
-			if str[i] == BRACE_SMALL_LEFT {
+			if str[i] == util.BRACE_SMALL_LEFT {
 				BRACEState = FOUND_BEGINNING
 				beginningIndex = i + 1
 				if endingIndex != -1 {
 					return str[beginningIndex:endingIndex]
 				} else {
-					err.Raise("ending BRACE not found")
-					return "else"
+					msg.Raise("Ending BRACE not found")
+					return CONDITION_ELSE
 				}
 			}
 			break
 		case FOUND_BEGINNING:
-			err.Raise("program has been mysteriously exited")
-			return "else"
+			msg.Raise("Program has been mysteriously exited")
+			return CONDITION_ELSE
 		}
 	}
-	err.Raise("require condition!")
-	return "else"
+	return CONDITION_ELSE
 }
 
 func newExpression(str string) string {
 	for i := 0; i < len(str); i++ {
-		if str[i] == BRACE_SMALL_LEFT || str[i] == BRACE_SMALL_RIGHT {
+		if str[i] == util.BRACE_SMALL_LEFT ||
+			str[i] == util.BRACE_SMALL_RIGHT {
 			return str[:i]
 		}
 	}
@@ -136,38 +78,54 @@ func newExpression(str string) string {
 
 func newBranch(code string) *branch {
 	ret := new(branch)
-	ret.Conditions = newCondition(code)
+	ret.Condition = newCondition(code)
 	ret.Expression = newExpression(code)
+	ret.IsDefault = ret.Condition == CONDITION_ELSE
 	return ret
 }
 
 func newState(str string) *state {
 	ret := new(state)
-	sep := strings.Index(str, string(BRACE_MIDDLE_LEFT))
+	sep := strings.Index(str, string(util.BRACE_MIDDLE_LEFT))
 	if sep == -1 {
-		err.Raise("main expression error")
+		msg.Raise("Main expression error")
 	}
-	ret.DimExpr = strings.Split(str[sep + 1:len(str) - 1], DIMENSION_SEP)
+	ret.NameExpr = str
 	ret.Name = str[:sep]
+	ret.DimExpr = strings.Split(str[sep+1:len(str)-1],
+		DIMENSION_SEP)
+	ret.RelationExpr = make([]string, 0) /// TODO
 	return ret
 }
 
+/// parse the given source code
 func Parse(source string) *dyProInfo {
-	checkBrace(source)
-	ret := newStateEquation(Clean(source))
-	fmt.Errorf(err.GetMessages())
+	sig1 := make(chan byte)
+	sig2 := make(chan byte)
+	sig3 := make(chan byte)
+	go checkBrace(source, &sig3)
+	ret := newStateEquation(source)
+	go checkSymbol(ret, &sig1)
+	go checkDimension(ret, &sig2)
+	sig1 <- '_'
+	sig2 <- '_'
+	sig3 <- '_'
+	fmt.Errorf(msg.GetErrors())
 	return ret
 }
 
-func newStateEquation(source string) *dyProInfo {
+func newStateEquation(code string) *dyProInfo {
+	source := Clean(code)
 	ret := new(dyProInfo)
 	ret.Type = "int"
-	ret.Detail = *NewImplDetail(10001)
-	split := strings.Split(source, BRANCH_TOKEN)
+	ret.Detail = *NewImplDetail(101)
+	split := strings.Split(
+		source,
+		BRANCH_TOKEN)
 	if len(split) < 2 {
-		err.Raise("require branches!")
+		msg.Raise("Require branches!")
 	} else {
-		branches := make([]branch, len(split) - 1)
+		branches := make([]branch, len(split)-1)
 		for index, i := range split[1:] {
 			branches[index] = *newBranch(i)
 		}
