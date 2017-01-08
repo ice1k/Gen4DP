@@ -16,6 +16,7 @@ func RaiseFormat(format string, args ...interface{}) {
 	fatal.AppendFormat(format, args...)
 }
 
+//noinspection GoUnusedExportedFunction
 func Warn(str string) {
 	warnings.Append(str)
 }
