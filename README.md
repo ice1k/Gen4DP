@@ -25,7 +25,7 @@ It generates:
 #include <algorithm>
 using namespace std;
 const int SIZE=101;
-typedef intnumber;
+typedef int number;
 number dp[SIZE];
 
 int main(const int argc, const char *argv[]) {
