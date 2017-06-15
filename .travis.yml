@@ -3,7 +3,6 @@ language: go
 go:
 - 1.7.6
 script:
-- export GOPATH
 - ./install.sh
 before_install:
 - chmod a+x ./install.sh
