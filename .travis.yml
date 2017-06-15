@@ -4,5 +4,6 @@ go:
 - 1.7.6
 script:
 - ./install.sh
+go_import_path: $GOPATH/src/github.com/ice1000/Gen4DP/
 before_install:
 - chmod a+x ./install.sh
