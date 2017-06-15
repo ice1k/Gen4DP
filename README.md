@@ -1,5 +1,7 @@
 # Gen4DP
 
+[![Build Status](https://travis-ci.org/ice1000/Gen4DP.svg?branch=master)](https://travis-ci.org/ice1000/Gen4DP)
+
 This is a simple program which generates C++ dynamic programming code from given state-translation equation.
 
 Unit tests are included.
