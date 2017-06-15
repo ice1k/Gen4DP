@@ -1,0 +1,6 @@
+sudo: required
+language: go
+script:
+- ./install.sh
+before_install:
+- chmod a+x install.sh
